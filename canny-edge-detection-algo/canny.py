@@ -11,7 +11,7 @@ def rgb2gray(rgb):
     '''Convert an RGB image to a gray scale image'''
     r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
     # gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
-    gray = 0.2126 * r + 0.7152 * g + 0.0722 * b
+    gray = 0.2126 * r + 0.7152 * g + 0.0722 * b # The formula for converting an RGB image to a grayscale image
 
     return gray
 
