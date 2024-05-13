@@ -10,7 +10,8 @@ import os
 def rgb2gray(rgb):
     '''Convert an RGB image to a gray scale image'''
     r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
-    gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
+    # gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
+    gray = 0.2126 * r + 0.7152 * g + 0.0722 * b
 
     return gray
 
@@ -23,24 +24,27 @@ def load_data(dir_name = 'input_images'):
     for filename in os.listdir(dir_name):
         if os.path.isfile(dir_name + '/' + filename):
             img = mpimg.imread(dir_name + '/' + filename)
+            # print("Before grayscaling",img[:1,:1,:])
             img = rgb2gray(img)
+            # print("After grayscaling",img[:1,:1])
             imgs.append(img)
     return imgs
 
 
-def visualize(imgs, format='gray'):
+def visualize(imgs):
     plt.figure(figsize=(5, 5))
     for i, img in enumerate(imgs):
-        print(img.shape)
         if img.shape[0] == 3:
             # Done to convert the image from the channel-first format
             # (example: shape: (3, height, width)) to the channel-last format (e.g., shape: (height, width, 3)), which is more commonly used in image processing libraries and visualization.
             img = img.transpose(1,2,0)
         plt_idx = i+1
         plt.subplot(1, 1, plt_idx)
-        if format=='color':
-            format=None
-        plt.imshow(img, cmap=format)
+        plt.imshow(img, cmap='gray')
+        # When we display a grayscale image with the "viridis" (default) colormap, matplotlib interprets each intensity value in the image as a position on the colormap. This means that:
+        # - Darker grayscale values (closer to 0) will be mapped to the blue end of the "viridis" colormap, appearing bluish.
+        # - Lighter grayscale values (closer to 255) will be mapped to the yellow end, appearing yellowish.
+        # So, we use the gray color map to display the grayscale image properly in grayscale.
     plt.show()
 
 def save_images(imgs, dir_name = 'output_images'):
@@ -177,7 +181,7 @@ class cannyEdgeDetector:
     def detect(self):
         imgs_final = []
         for i, img in enumerate(self.imgs):  
-            visualize([img],format='color') # Remove format='color' to see the image in grayscale
+            visualize([img]) 
             self.img_smoothed = convolve(img, self.gaussian_kernel(self.kernel_size, self.sigma))
             visualize([self.img_smoothed])
             self.gradientMat, self.thetaMat = self.sobel_filters(self.img_smoothed)
